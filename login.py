@@ -1,22 +1,13 @@
 import traceback
 import logging
-from google.appengine.ext import ndb
-
-
-def guestbook_key(guestbook_name):    
-    return ndb.Key('Guestbook', guestbook_name)
-
-class StoreRetrieveData(ndb.Model):
-    name = ndb.StringProperty(indexed=False)
-    phone = ndb.StringProperty(indexed=False)
-    email = ndb.StringProperty(indexed=False)
+from actions import StoreRetrieveData
 
 
 class Login:
-
+   
+   
    def __init__(self):
       pass
-
    
 from flask import Flask, redirect, url_for, request, render_template
 
@@ -30,34 +21,76 @@ login = Login()
 def home():
     return render_template('index.html')
 
+@app.route('/change/')
+def changePage():
+    return render_template('ChangeName.html')
 
-@app.route('/change',methods = ['POST', 'GET'])
+@app.route('/changeSubmit',methods = ['POST', 'GET'])
 def changeName():
+   #fields = SaveDict.SaveDict()._SaveDict__getDict()
+   fields = {}
    try:
       if request.method == 'POST':
-         user = request.form['ExistingName']
-         print user
-         return redirect(url_for('success',name = user))
-      else:
-         user = request.args.get('ExistingName')
-         print user
-         return redirect(url_for('success',name = user))
+         
+         fields['id'] = request.form['name']
+         fields['stuName'] = request.form['NewName']
+         print('Student Fields: '+ str(fields))
+         print('Student Id Field: '+fields['id'])
+         StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__saveData(fields['id'],fields)
+         #SaveDict.SaveDict()._SaveDict__updateDict(fields)
+         return redirect(url_for('success', name=fields['id']))
    except:
-      print "Change except"
-      return render_template('ChangeName.html')
+      print("Change except")
+      logger.error("changeName Method, config file", traceback.print_exc())
+      return render_template('index.html')
 
-@app.route('/update',methods = ['POST', 'GET'])
-def updateName():
+@app.route('/update/')
+def updatePage():
+    return render_template('UpdatePassword.html')
+ 
+@app.route('/updateSubmit',methods = ['POST', 'GET'])
+def updatePassword():
+   #fields = SaveDict.SaveDict()._SaveDict__getDict()
+   fields = {}
    try:
       if request.method == 'POST':
-         user= request.form['OldPassword']
-         return redirect(url_for('success',name = user))
-      else:
-         user = request.args.get('OldPassword')
-         return redirect(url_for('success',name = user))
+         fields['id'] = request.form['name']
+         fields['stuPassword']= request.form['NewPassword']
+         StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__saveData(fields['id'],fields)
+         #SaveDict.SaveDict()._SaveDict__updateDict(fields)
+         return redirect(url_for('success', name=fields['id']))
    except:
-      print "UpdatePassword except"
-      return render_template('UpdatePassword.html')
+      print("UpdatePassword except")
+      return render_template('index.html')
+
+@app.route('/register')
+def registerPage():
+    return render_template('register.html')
+
+@app.route('/registerSubmit',methods = ['POST', 'GET'])
+def register():
+    fields = {}
+    try:
+      if request.method == 'POST':
+         fields['id']= request.form['stuId']
+         fields['stuName']= request.form['stuName']
+         fields['stuPassword']= request.form['pwd']
+         #SaveDict.SaveDict()._SaveDict__updateDict(fields)
+         #StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__setStudentId(fields['id'])
+         #print('register SetStudentId: '+ StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getStudentId())
+         #save.setStudentId(fields['id'])
+         print("StudentId: "+fields['id'])
+         print("StudentName: "+fields['stuName'])
+         print("StudentPassword: "+fields['stuPassword'])
+         print("Student: "+str(fields))
+         
+         StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__saveData(fields['id'],fields)
+         return redirect(url_for('success', name=fields['id']))
+    except:
+      print("Register except")
+      logger.error("register Method, config file", traceback.print_exc())
+      return render_template('register.html')
+   
 
 @app.route('/success/<name>')
 def success(name):
@@ -68,28 +101,26 @@ def login():
    try:
       if request.method == 'POST':
          user = request.form['nm']
-         #StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__storeData(user)
-         store = StoreRetrieveData(parent=guestbook_key(user))
-         #ancestor_key = ndb.Key("user", user)
-         store.name = "SampleName"
-         store.phone = "999 999 999"
-         store.email = "jugal.bhatt@gmail.com"
-         store.put()
-         return redirect(url_for('success',name = user))
-      else:
-         user = request.args.get('nm')
-         #StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__storeData(user)
-         store = StoreRetrieveData(parent=guestbook_key(user))
-         #ancestor_key = ndb.Key("user", user)
-         store.name = "SampleName"
-         store.phone = "999 999 999"
-         store.email = "jugal.bhatt@gmail.com"
-         store.put()
-         return redirect(url_for('success',name = user))
-   except:
-      print "login Exception - hello.py"
-      logger.error("Main Method, config file", traceback.print_exc())
-     
+         pwd = request.form['pwd']
+         userName = StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getUser(user)
+         password = StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getUser(pwd)
+         
+         print('userName {}: {}'.format("Testing", userName))
+         print('PasswordName {}: {}'.format("Testing", password))
+         if (userName == password):
+            print('login func if {}: {}'.format("Testing", userName))
+            #StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__setStudentId(user)
+            #print('Login SetStudentId: '+ StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getStudentId())
+            return redirect(url_for('success',name = user)) 
+         else:
+            print('login func else {}: {}'.format("Testing", userName))
+            return redirect(url_for('registerPage'))      
 
+   except:
+      print("login Exception - login.py")
+      logger.error("login Method, config file", traceback.print_exc())
+      return redirect(url_for('registerPage'))
+      
+      
 if __name__ == '__main__':
     app.run(debug=True)

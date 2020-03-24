@@ -1,8 +1,44 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <style>
+            ul {
+              list-style-type: none;
+              margin: 0;
+              padding: 0;
+              overflow: hidden;
+              background-color: #333;
+            }
+            
+            li {
+              float: left;
+            }
+            
+            li a {
+              display: block;
+              color: white;
+              text-align: center;
+              padding: 14px 16px;
+              text-decoration: none;
+            }
+            
+            li a:hover {
+              background-color: #111;
+            }
+            </style>
     </head>
 <body>
-    <p>This is the processed string: {{ string_variable }} </p>
+
+    <ul>
+        <li><a class="active" href="https://testing-dot-guestbook-project-271601.appspot.com/update">UpdatePassword</a></li>
+        <li><a class="active" href="https://testing-dot-guestbook-project-271601.appspot.com/change">ChangeName</a></li>
+        <li><a class="active" href="https://testing-dot-guestbook-project-271601.appspot.com/">Logout</a></li>
+    </ul>
+
+    <form action = "https://testing-dot-guestbook-project-271601.appspot.com/success" method = "post">
+        <p><p>You have successfully Logged in: {{ string_variable }} </p></p>
+     </form>
 </body>
 </html>
+
+
