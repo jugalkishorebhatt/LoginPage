@@ -7,7 +7,7 @@ class Login:
    
    
    def __init__(self):
-      pass
+      self.updating = ""
    
 from flask import Flask, redirect, url_for, request, render_template
 
@@ -15,7 +15,8 @@ from flask import Flask, redirect, url_for, request, render_template
 app = Flask(__name__)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-login = Login()
+logining = Login()
+
 
 @app.route('/')
 def home():
@@ -33,9 +34,11 @@ def changeName():
       if request.method == 'POST':
          
          fields['id'] = request.form['name']
+         fields['stuPassword'] = logining.updating['stuPassword']
          fields['stuName'] = request.form['NewName']
          print('Student Fields: '+ str(fields))
          print('Student Id Field: '+fields['id'])
+         print("Updated Values Password:"+str(logining.updating['stuPassword']))
          StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__saveData(fields['id'],fields)
          #SaveDict.SaveDict()._SaveDict__updateDict(fields)
          return redirect(url_for('success', name=fields['id']))
@@ -56,6 +59,7 @@ def updatePassword():
       if request.method == 'POST':
          fields['id'] = request.form['name']
          fields['stuPassword']= request.form['NewPassword']
+         fields['stuName'] = logining.updating['stuName']
          StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__saveData(fields['id'],fields)
          #SaveDict.SaveDict()._SaveDict__updateDict(fields)
          return redirect(url_for('success', name=fields['id']))
@@ -83,6 +87,10 @@ def register():
          print("StudentName: "+fields['stuName'])
          print("StudentPassword: "+fields['stuPassword'])
          print("Student: "+str(fields))
+         print("Testing Logining Data: "+ logining.updating)
+         logining.updating = fields
+         
+         print("Updated Values:"+str(logining.updating))
          
          StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__saveData(fields['id'],fields)
          return redirect(url_for('success', name=fields['id']))
@@ -102,16 +110,17 @@ def login():
       if request.method == 'POST':
          user = request.form['nm']
          pwd = request.form['pwd']
-         userName = StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getUser(user)
-         password = StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getUser(pwd)
+         retValue = StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getUser(user,pwd)
+         #password = StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getUser(pwd)
          
-         print('userName {}: {}'.format("Testing", userName))
-         print('PasswordName {}: {}'.format("Testing", password))
-         if (userName == password):
-            print('login func if {}: {}'.format("Testing", userName))
-            #StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__setStudentId(user)
-            #print('Login SetStudentId: '+ StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getStudentId())
-            return redirect(url_for('success',name = user)) 
+         print('userName {}: {}'.format("Testing", retValue[0]))
+         print('PasswordName {}: {}'.format("Testing", retValue[1]))
+         if (retValue[0]):
+            if(pwd == retValue[1]):
+               print('login func if {}: {}'.format("Testing", pwd))
+               #StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__setStudentId(user)
+               #print('Login SetStudentId: '+ StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getStudentId())
+               return redirect(url_for('success',name = user)) 
          else:
             print('login func else {}: {}'.format("Testing", userName))
             return redirect(url_for('registerPage'))      
