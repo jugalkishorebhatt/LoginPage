@@ -9,7 +9,7 @@ class StoreRetrieveData:
         self.client = datastore.Client()
    
     def __saveData(self,key,value):
-        key = self.client.key('StoreRetrieveData', key)
+        key = self.client.key('default', key)
         entity = datastore.Entity(key=key)
         print('Key saveData {}: {}'.format(entity, value))
         entity.update(value)
@@ -26,7 +26,7 @@ class StoreRetrieveData:
 
     def __getUser(self,user,pwd):
         try:
-            key = self.client.key('StoreRetrieveData', user)
+            key = self.client.key('default', user)
             entity = datastore.Entity(key=key)
             result = self.client.get(key)
             print('getUser {}: {}'.format("Testing", result))

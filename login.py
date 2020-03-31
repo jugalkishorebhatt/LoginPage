@@ -33,7 +33,7 @@ def changeName():
    try:
       if request.method == 'POST':
          
-         fields['id'] = request.form['name']
+         fields['id'] = logining.updating['id']
          fields['stuPassword'] = logining.updating['stuPassword']
          fields['stuName'] = request.form['NewName']
          print('Student Fields: '+ str(fields))
@@ -57,7 +57,7 @@ def updatePassword():
    fields = {}
    try:
       if request.method == 'POST':
-         fields['id'] = request.form['name']
+         fields['id'] = logining.updating['id']
          fields['stuPassword']= request.form['NewPassword']
          fields['stuName'] = logining.updating['stuName']
          StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__saveData(fields['id'],fields)
@@ -87,7 +87,7 @@ def register():
          print("StudentName: "+fields['stuName'])
          print("StudentPassword: "+fields['stuPassword'])
          print("Student: "+str(fields))
-         print("Testing Logining Data: "+ logining.updating)
+         print("Testing Logining Data: "+ str(logining.updating))
          logining.updating = fields
          
          print("Updated Values:"+str(logining.updating))
@@ -115,12 +115,13 @@ def login():
          
          print('userName {}: {}'.format("Testing", retValue[0]))
          print('PasswordName {}: {}'.format("Testing", retValue[1]))
-         if (retValue[0]):
-            if(pwd == retValue[1]):
-               print('login func if {}: {}'.format("Testing", pwd))
-               #StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__setStudentId(user)
-               #print('Login SetStudentId: '+ StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getStudentId())
-               return redirect(url_for('success',name = user)) 
+         if (retValue[0] and pwd == retValue[1]):
+            #print('Flag: '+pwd == retValue[1])
+            #if(pwd == retValue[1]):
+            print('login func if {}: {}'.format("Testing", pwd))
+            #StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__setStudentId(user)
+            #print('Login SetStudentId: '+ StoreRetrieveData.StoreRetrieveData()._StoreRetrieveData__getStudentId())
+            return redirect(url_for('success',name = user)) 
          else:
             print('login func else {}: {}'.format("Testing", userName))
             return redirect(url_for('registerPage'))      
